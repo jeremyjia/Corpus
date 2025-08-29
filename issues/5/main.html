@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub资源管理器 - 支持文件夹浏览</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 25px;
+        }
+        
+        .repo-info {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+        
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .breadcrumb a {
+            color: #ff7e5f;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb span {
+            margin: 0 10px;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input, select, button {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+        button {
+            background: #ff7e5f;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #ff6347;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .count-badge {
+            background: #ff7e5f;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .file-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .file-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .file-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .folder-item {
+            background: rgba(255, 165, 0, 0.2);
+        }
+        
+        .folder-item:hover {
+            background: rgba(255, 165, 0, 0.3);
+        }
+        
+        .player {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .player img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        audio {
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .now-playing {
+            margin: 15px 0;
+            font-size: 1.2rem;
+            min-height: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .viewing {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            min-height: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .search-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-box i {
+            margin-right: 10px;
+            opacity: 0.7;
+        }
+        
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 5px;
+            width: 100%;
+        }
+        
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-box input:focus {
+            outline: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GitHub资源管理器</h1>
+            <p class="description">浏览并播放GitHub仓库中的MP3音乐和图片资源（支持文件夹浏览）</p>
+            <div class="repo-info">
+                <p><i class="fab fa-github"></i> jeremyjia/Corpus</p>
+            </div>
+        </header>
+        
+        <div id="breadcrumb" class="breadcrumb">
+            <a class="breadcrumb-home">根目录</a>
+        </div>
+        
+        <div class="controls">
+            <div class="input-group">
+                <button id="loadBtn"><i class="fas fa-sync-alt"></i> 刷新资源</button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title">
+                    <span><i class="fas fa-music"></i> 音频文件</span>
+                    <span id="audioCount" class="count-badge">0</span>
+                </h2>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="audioSearch" placeholder="搜索音频文件...">
+                </div>
+                <div id="audioList" class="file-list">
+                    <div class="loading">点击"刷新资源"按钮获取音频文件</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">
+                    <span><i class="fas fa-image"></i> 图片文件</span>
+                    <span id="imageCount" class="count-badge">0</span>
+                </h2>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="imageSearch" placeholder="搜索图片文件...">
+                </div>
+                <div id="imageList" class="file-list">
+                    <div class="loading">点击"刷新资源"按钮获取图片文件</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section player">
+            <h2 class="section-title">播放器与查看器</h2>
+            <div id="nowPlaying" class="now-playing">选择音频文件进行播放</div>
+            <audio id="audioPlayer" controls></audio>
+            
+            <div id="viewing" class="viewing">选择图片进行查看</div>
+            <img id="imageViewer" src="" alt="图片预览" class="hidden">
+        </div>
+        
+        <footer>
+            <p>GitHub资源管理器 &copy; 2023 | 数据来源: jeremyjia/Corpus 仓库</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadBtn = document.getElementById('loadBtn');
+            const audioList = document.getElementById('audioList');
+            const imageList = document.getElementById('imageList');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const imageViewer = document.getElementById('imageViewer');
+            const nowPlaying = document.getElementById('nowPlaying');
+            const viewing = document.getElementById('viewing');
+            const audioCount = document.getElementById('audioCount');
+            const imageCount = document.getElementById('imageCount');
+            const audioSearch = document.getElementById('audioSearch');
+            const imageSearch = document.getElementById('imageSearch');
+            const breadcrumb = document.getElementById('breadcrumb');
+            
+            // 固定的GitHub API URL
+            const mp3BaseUrl = 'https://api.github.com/repos/jeremyjia/Corpus/contents/songs/mp3';
+            const picBaseUrl = 'https://api.github.com/repos/jeremyjia/Corpus/contents/songs/pic';
+            
+            let allAudioFiles = [];
+            let allImageFiles = [];
+            let currentAudioPath = mp3BaseUrl;
+            let currentImagePath = picBaseUrl;
+            let pathHistory = [{name: '根目录', audioUrl: mp3BaseUrl, imageUrl: picBaseUrl}];
+            
+            loadBtn.addEventListener('click', loadResources);
+            audioSearch.addEventListener('input', filterAudioFiles);
+            imageSearch.addEventListener('input', filterImageFiles);
+            
+            // 初始化面包屑导航
+            updateBreadcrumb();
+            
+            async function loadResources() {
+                // 显示加载中
+                audioList.innerHTML = '<div class="loading">加载中...</div>';
+                imageList.innerHTML = '<div class="loading">加载中...</div>';
+                
+                try {
+                    // 获取MP3文件
+                    const mp3Response = await fetch(currentAudioPath + '?ref=main');
+                    if (!mp3Response.ok) {
+                        throw new Error('无法获取MP3文件列表');
+                    }
+                    const mp3Data = await mp3Response.json();
+                    
+                    // 获取图片文件
+                    const picResponse = await fetch(currentImagePath + '?ref=main');
+                    if (!picResponse.ok) {
+                        throw new Error('无法获取图片文件列表');
+                    }
+                    const picData = await picResponse.json();
+                    
+                    // 保存所有文件
+                    allAudioFiles = mp3Data;
+                    allImageFiles = picData;
+                    
+                    // 显示文件列表
+                    displayFiles(allAudioFiles, audioList, 'audio');
+                    displayFiles(allImageFiles, imageList, 'image');
+                    
+                    // 更新计数
+                    audioCount.textContent = allAudioFiles.filter(item => item.type === 'file').length;
+                    imageCount.textContent = allImageFiles.filter(item => item.type === 'file').length;
+                    
+                } catch (error) {
+                    showError(audioList, error.message);
+                    showError(imageList, error.message);
+                }
+            }
+            
+            function displayFiles(files, container, type) {
+                if (files.length === 0) {
+                    container.innerHTML = '<div class="loading">未找到相关文件</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                // 首先显示文件夹
+                files.filter(item => item.type === 'dir').forEach(item => {
+                    const fileItem = createFileItem(item, type, true);
+                    container.appendChild(fileItem);
+                });
+                
+                // 然后显示文件
+                files.filter(item => item.type === 'file').forEach(item => {
+                    const fileItem = createFileItem(item, type, false);
+                    container.appendChild(fileItem);
+                });
+            }
+            
+            function createFileItem(item, type, isFolder) {
+                const fileItem = document.createElement('div');
+                fileItem.className = isFolder ? 'file-item folder-item' : 'file-item';
+                fileItem.dataset.name = item.name;
+                fileItem.dataset.url = item.url;
+                fileItem.dataset.downloadUrl = item.download_url;
+                fileItem.dataset.path = item.path;
+                
+                const icon = document.createElement('span');
+                icon.className = 'file-icon';
+                icon.innerHTML = isFolder ? 
+                    '<i class="fas fa-folder"></i>' : 
+                    (type === 'audio' ? '<i class="fas fa-music"></i>' : '<i class="fas fa-image"></i>');
+                
+                const fileName = document.createElement('span');
+                fileName.className = 'file-name';
+                fileName.textContent = item.name;
+                
+                fileItem.appendChild(icon);
+                fileItem.appendChild(fileName);
+                
+                fileItem.addEventListener('click', () => {
+                    if (isFolder) {
+                        navigateToFolder(item.url, item.name, type);
+                    } else {
+                        if (type === 'audio') {
+                            playAudio(item.download_url, item.name);
+                        } else {
+                            viewImage(item.download_url, item.name);
+                        }
+                    }
+                });
+                
+                return fileItem;
+            }
+            
+            function navigateToFolder(url, name, type) {
+                if (type === 'audio') {
+                    currentAudioPath = url;
+                    pathHistory.push({
+                        name: name,
+                        audioUrl: url,
+                        imageUrl: currentImagePath
+                    });
+                } else {
+                    currentImagePath = url;
+                    pathHistory.push({
+                        name: name,
+                        audioUrl: currentAudioPath,
+                        imageUrl: url
+                    });
+                }
+                
+                updateBreadcrumb();
+                loadResources();
+            }
+            
+            function navigateBreadcrumb(index) {
+                if (index >= pathHistory.length) return;
+                
+                const historyItem = pathHistory[index];
+                currentAudioPath = historyItem.audioUrl;
+                currentImagePath = historyItem.imageUrl;
+                
+                // 截断历史
+                pathHistory = pathHistory.slice(0, index + 1);
+                updateBreadcrumb();
+                loadResources();
+            }
+            
+            function updateBreadcrumb() {
+                breadcrumb.innerHTML = '';
+                
+                pathHistory.forEach((item, index) => {
+                    if (index > 0) {
+                        const separator = document.createElement('span');
+                        separator.innerHTML = '&gt;';
+                        breadcrumb.appendChild(separator);
+                    }
+                    
+                    const crumb = document.createElement('a');
+                    crumb.textContent = item.name;
+                    crumb.addEventListener('click', () => navigateBreadcrumb(index));
+                    breadcrumb.appendChild(crumb);
+                });
+            }
+            
+            function filterAudioFiles() {
+                const searchTerm = audioSearch.value.toLowerCase();
+                const filteredFiles = allAudioFiles.filter(file => 
+                    file.name.toLowerCase().includes(searchTerm)
+                );
+                displayFiles(filteredFiles, audioList, 'audio');
+            }
+            
+            function filterImageFiles() {
+                const searchTerm = imageSearch.value.toLowerCase();
+                const filteredFiles = allImageFiles.filter(file => 
+                    file.name.toLowerCase().includes(searchTerm)
+                );
+                displayFiles(filteredFiles, imageList, 'image');
+            }
+            
+            function playAudio(url, name) {
+                audioPlayer.src = url;
+                nowPlaying.textContent = `正在播放: ${name}`;
+                viewing.textContent = '选择图片进行查看';
+                imageViewer.classList.add('hidden');
+                audioPlayer.play();
+            }
+            
+            function viewImage(url, name) {
+                imageViewer.src = url;
+                viewing.textContent = `正在查看: ${name}`;
+                nowPlaying.textContent = '选择音频文件进行播放';
+                audioPlayer.pause();
+                audioPlayer.src = '';
+                imageViewer.classList.remove('hidden');
+            }
+            
+            function showError(container, message) {
+                container.innerHTML = `<div class="error">${message}</div>`;
+            }
+            
+            // 初始加载资源
+            loadResources();
+        });
+    </script>
+</body>
+</html>
