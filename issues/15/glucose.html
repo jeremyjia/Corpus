@@ -28,50 +28,29 @@ body {
   margin: 0 auto;
 }
 h1 { text-align: center; margin-bottom: 20px; color: var(--primary); font-size: 1.8rem; }
-
 .card {
   background: var(--card);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 12px; padding: 20px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   margin-bottom: 20px;
 }
-
-/* 配置 */
 .config-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
+  color: white; border-radius: 12px; padding: 20px; margin-bottom: 20px;
 }
 .config-section h2 { margin-bottom: 12px; font-size: 1.1rem; }
-.config-section input {
-  background: rgba(255,255,255,0.9);
-  color: #111;
-}
-.config-status {
-  margin-top: 10px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  white-space: pre-wrap;
-}
+.config-section input { background: rgba(255,255,255,0.9); color: #111; }
+.config-status { margin-top: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; }
 .config-status.connected { background: rgba(16,185,129,0.2); color: #a7f3d0; }
 .config-status.error { background: rgba(239,68,68,0.2); color: #fecaca; }
-.config-status.info { background: rgba(59,130,246,0.2); color: #bfdbfe; }
-
-/* 表单 */
 .form-group { margin-bottom: 14px; }
 label { display: block; margin-bottom: 4px; font-weight: 500; font-size: 0.9rem; }
 input, select, textarea {
-  width: 100%; padding: 9px 12px;
-  border: 1px solid var(--border); border-radius: 8px;
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px;
   font-size: 1rem; font-family: inherit;
 }
 input:focus, select:focus, textarea:focus {
-  outline: none; border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+  outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
 }
 .row { display: flex; gap: 12px; }
 .row .form-group { flex: 1; }
@@ -79,37 +58,28 @@ button {
   padding: 9px 18px; border: none; border-radius: 8px;
   font-size: 1rem; cursor: pointer; font-weight: 500;
 }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
 .btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-hover); }
-.btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
 .btn-danger { background: var(--danger); color: white; font-size: 0.85rem; padding: 6px 10px; }
 .btn-secondary { background: var(--border); color: var(--text); }
-
-/* 统计 */
-.stats-bar {
-  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
-}
+.btn-secondary:hover:not(:disabled) { background: #d1d5db; }
+.stats-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .stat-card {
-  background: var(--card); padding: 14px 16px;
-  border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  flex: 1; min-width: 180px;
+  background: var(--card); padding: 14px 16px; border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1; min-width: 180px;
 }
 .stat-card h3 { font-size: 0.95rem; margin-bottom: 8px; color: var(--primary); }
 .stat-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
 .stat-row span:last-child { font-weight: 600; }
-
-/* 列表 */
 .record-group { margin-bottom: 24px; }
 .group-header {
   font-size: 1rem; font-weight: 600; color: var(--primary);
-  margin-bottom: 10px; padding-bottom: 4px;
-  border-bottom: 2px solid #e0e7ff;
+  margin-bottom: 10px; padding-bottom: 4px; border-bottom: 2px solid #e0e7ff;
 }
 .record-item {
-  background: var(--card); border-radius: 10px;
-  padding: 14px 18px; margin-bottom: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  display: flex; justify-content: space-between; align-items: flex-start;
+  background: var(--card); border-radius: 10px; padding: 14px 18px; margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: flex-start;
 }
 .record-glucose { font-size: 1.5rem; font-weight: 700; min-width: 70px; }
 .glucose-normal { color: var(--success); }
@@ -119,16 +89,12 @@ button {
 .record-meta { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px; }
 .record-food { font-size: 0.9rem; }
 .record-notes { font-size: 0.85rem; color: var(--text-secondary); font-style: italic; }
-.tag {
-  display: inline-block; padding: 2px 8px; border-radius: 4px;
-  font-size: 0.75rem; font-weight: 500; margin-right: 6px;
-}
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; margin-right: 6px; }
 .tag-空腹 { background: #dbeafe; color: #1e40af; }
 .tag-餐后1h { background: #fce7f3; color: #9d174d; }
 .tag-餐后2h { background: #fef3c7; color: #92400e; }
 .tag-随机 { background: #d1fae5; color: #065f46; }
 .tag-睡前 { background: #ede9fe; color: #5b21b6; }
-
 .loading, .empty-state { text-align: center; padding: 40px; color: var(--text-secondary); }
 .spinner {
   display: inline-block; width: 20px; height: 20px;
@@ -143,70 +109,49 @@ button {
 .toast-success { background: var(--success); }
 .toast-error { background: var(--danger); }
 .hidden { display: none !important; }
-
-/* 引导 */
-.guide {
-  background: #fffbeb; border: 1px solid #fde68a;
-  border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
-  font-size: 0.9rem; color: #92400e;
-}
-.guide code { background: #fef3c7; padding: 1px 5px; border-radius: 4px; }
-.guide ol { margin-left: 20px; }
-.guide li { margin-bottom: 6px; }
 </style>
 </head>
 <body>
 
 <h1>🩸 血糖记录本</h1>
 
-<div style="text-align:right; margin-bottom:8px;">
+<div style="text-align:right; margin-bottom:8px; display:flex; justify-content:flex-end; gap:8px;">
+  <button class="btn-secondary" id="btnRefresh" onclick="handleRefresh()">🔄 刷新</button>
   <button class="btn-secondary" onclick="toggleConfig()">⚙️ 配置</button>
 </div>
 
 <div class="config-section hidden" id="configSection">
   <h2>GitHub 配置</h2>
   <div class="form-group">
-    <label>GitHub Token（留空使用内置默认值）</label>
+    <label>GitHub Token</label>
     <input type="password" id="ghToken" placeholder="留空使用默认值">
   </div>
   <div class="row">
     <div class="form-group">
       <label>仓库所有者</label>
-      <input type="text" id="ghOwner" value="jeremyjia">
+      <input type="text" id="ghOwner">
     </div>
     <div class="form-group">
       <label>仓库名称</label>
-      <input type="text" id="ghRepo" value="Corpus">
+      <input type="text" id="ghRepo">
     </div>
   </div>
   <div class="row">
     <div class="form-group">
       <label>Issue 编号</label>
-      <input type="number" id="ghIssueNumber" value="15">
+      <input type="number" id="ghIssueNumber">
     </div>
     <div class="form-group">
       <label>默认被测人</label>
-      <input type="text" id="ghDefaultPatient" value="Jeremy">
+      <input type="text" id="ghDefaultPatient">
     </div>
   </div>
-  <button class="btn-primary" onclick="connectGitHub()">连接并加载数据</button>
+  <button class="btn-primary" id="btnConnect" onclick="connectGitHub()">连接并加载数据</button>
   <div id="configStatus"></div>
-</div>
-
-<!-- 首次加载引导（未配置/未连接时显示） -->
-<div class="guide" id="guide">
-  <strong>首次使用指引：</strong>
-  <ol>
-    <li>确认仓库 <code>jeremyjia/Corpus</code> 中已存在 <b>Issue #15</b>（没有就新建一个，标题随意）。</li>
-    <li>点右上角 <b>⚙️ 配置</b>，确认配置无误后点 <b>连接并加载数据</b>。</li>
-    <li>连接成功后即可添加记录；数据保存在 Issue #15 的评论中。</li>
-    <li>若页面仍空白：检查仓库是否已开启 <b>Settings → Pages</b>（Source 选 main 分支、/root）。</li>
-  </ol>
 </div>
 
 <div id="mainContent" class="hidden">
   <div class="stats-bar" id="statsBar"></div>
-
   <div class="card">
     <h2 style="margin-bottom:12px; font-size:1.05rem;">📝 添加记录</h2>
     <form id="recordForm">
@@ -229,7 +174,7 @@ button {
       <div class="row">
         <div class="form-group">
           <label>血糖值 (mmol/L)</label>
-          <input type="number" id="glucose" step="0.1" min="0" max="30" required placeholder="如 5.6">
+          <input type="number" id="glucose" step="0.1" min="0" max="30" required>
         </div>
         <div class="form-group">
           <label>测量时间</label>
@@ -238,16 +183,15 @@ button {
       </div>
       <div class="form-group">
         <label>饮食内容</label>
-        <input type="text" id="food" placeholder="如：燕麦粥、鸡蛋">
+        <input type="text" id="food">
       </div>
       <div class="form-group">
         <label>备注</label>
-        <textarea id="notes" rows="2" placeholder="运动、心情、特殊情况..."></textarea>
+        <textarea id="notes" rows="2"></textarea>
       </div>
-      <button type="submit" class="btn-primary" id="submitBtn">💾 保存记录</button>
+      <button type="submit" class="btn-primary">💾 保存记录</button>
     </form>
   </div>
-
   <div id="recordList"></div>
 </div>
 
@@ -256,213 +200,167 @@ const DEFAULT_OWNER = 'jeremyjia';
 const DEFAULT_REPO = 'Corpus';
 const DEFAULT_ISSUE = 15;
 const DEFAULT_PATIENT = 'Jeremy';
-// token 拆分拼接，防止静态扫描直接暴露
 const DEFAULT_TOKEN = ['ghp_','Od6GW3J2','NiP01Zsz','g9JQV0am','znUxhF33','iBES'].join('');
 
 const CONFIG_KEY = 'glucose_config';
 const MARKER = '<!-- GLUCOSE_RECORD -->\n```json\n';
-const API = 'https://api.github.com';
 
 function saveConfig(c) { localStorage.setItem(CONFIG_KEY, JSON.stringify(c)); }
-function loadConfig() {
-  const s = localStorage.getItem(CONFIG_KEY); return s ? JSON.parse(s) : null;
-}
-function getHeaders(cfg) {
-  return {
-    'Authorization': `Bearer ${cfg.token}`,
-    'Accept': 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28'
-  };
+function loadConfig() { const s = localStorage.getItem(CONFIG_KEY); return s ? JSON.parse(s) : null; }
+function getHeaders() {
+  const c = loadConfig();
+  return { 'Authorization': `Bearer ${c.token}`, 'Accept': 'application/vnd.github+json' };
 }
 
-function showStatus(msg, type) {
-  const el = document.getElementById('configStatus');
-  el.className = `config-status ${type}`;
-  el.textContent = msg;
-}
-
-function toggleConfig() {
-  document.getElementById('configSection').classList.toggle('hidden');
-}
-
-// 读取表单配置，未填写则用默认值
-function readConfig() {
-  return {
-    token: document.getElementById('ghToken').value.trim() || DEFAULT_TOKEN,
-    owner: document.getElementById('ghOwner').value.trim() || DEFAULT_OWNER,
-    repo: document.getElementById('ghRepo').value.trim() || DEFAULT_REPO,
-    issueNumber: parseInt(document.getElementById('ghIssueNumber').value.trim() || DEFAULT_ISSUE),
-    defaultPatient: document.getElementById('ghDefaultPatient').value.trim() || DEFAULT_PATIENT
-  };
-}
-
-// 连接 GitHub：验证 issue 存在 + 加载数据
 async function connectGitHub() {
-  const cfg = readConfig();
-  const btn = event ? event.target : null;
-  if (btn) { btn.disabled = true; btn.textContent = '连接中...'; }
-
+  const btn = document.getElementById('btnConnect');
+  btn.disabled = true; btn.textContent = '连接中...';
+  const token = document.getElementById('ghToken').value.trim() || DEFAULT_TOKEN;
+  const owner = document.getElementById('ghOwner').value.trim() || DEFAULT_OWNER;
+  const repo = document.getElementById('ghRepo').value.trim() || DEFAULT_REPO;
+  const issueNumber = document.getElementById('ghIssueNumber').value.trim() || DEFAULT_ISSUE;
+  const defaultPatient = document.getElementById('ghDefaultPatient').value.trim() || DEFAULT_PATIENT;
   try {
-    // 1) 验证 issue 存在且 token 有权限
-    let issue;
-    try {
-      const r = await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/issues/${cfg.issueNumber}`, {
-        headers: { 'Authorization': `Bearer ${cfg.token}`, 'Accept': 'application/vnd.github+json' }
-      });
-      if (!r.ok) {
-        const t = await r.text();
-        if (r.status === 404) throw new Error(`仓库或 Issue #${cfg.issueNumber} 不存在，请先到仓库新建 Issue #${cfg.issueNumber}`);
-        if (r.status === 401) throw new Error('Token 无效（401），请检查 Token 是否有 repo/issues 权限');
-        if (r.status === 403) throw new Error('Token 无权限（403），需勾选 Issues:read & write；也可能是 API 限流，稍后重试');
-        throw new Error(`验证失败 (${r.status}): ${t}`);
-      }
-      issue = await r.json();
-    } catch (e) {
-      if (e.message.startsWith('仓库或') || e.message.startsWith('Token 无效') || e.message.startsWith('Token 无权限')) throw e;
-      throw new Error('网络请求失败，请确认已开启 GitHub Pages 且网络正常');
-    }
-
-    // 2) 保存配置
-    saveConfig(cfg);
-    document.getElementById('patient').value = cfg.defaultPatient;
-
-    showStatus(`✅ 已连接 Issue #${cfg.issueNumber}：「${issue.title}」`, 'connected');
-    document.getElementById('guide').classList.add('hidden');
+    const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+    });
+    if (r.status === 404) throw new Error('Issue 不存在，请先在仓库中新建 Issue #' + issueNumber);
+    if (r.status === 401) throw new Error('Token 无效或无权限');
+    if (r.status === 403) throw new Error('API 被限流或 Token 权限不足');
+    if (!r.ok) throw new Error('连接失败: HTTP ' + r.status);
+    const issue = await r.json();
+    saveConfig({ token, owner, repo, issueNumber: parseInt(issueNumber), defaultPatient });
+    const st = document.getElementById('configStatus');
+    st.className = 'config-status connected'; st.textContent = `✅ 已连接: ${issue.title}`;
     document.getElementById('mainContent').classList.remove('hidden');
-
-    // 3) 加载数据
-    await loadRecords(cfg);
+    document.getElementById('patient').value = defaultPatient;
+    await doLoadRecords();
+    const recs = JSON.parse(sessionStorage.getItem('recs') || '[]');
+    toast(`✅ 已加载 ${recs.length} 条记录`);
   } catch (e) {
-    showStatus(`❌ ${e.message}`, 'error');
-    document.getElementById('mainContent').classList.add('hidden');
+    const st = document.getElementById('configStatus');
+    st.className = 'config-status error'; st.textContent = '❌ ' + e.message;
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '连接并加载数据'; }
+    btn.disabled = false; btn.textContent = '连接并加载数据';
   }
 }
 
-// 解析一条 comment -> record（含向后兼容：无 patient 归默认人）
-function parseRecord(comment, cfg) {
-  if (!comment.body || !comment.body.includes(MARKER)) return null;
+/* ★ 刷新按钮专用入口 —— 带 loading 反馈 */
+async function handleRefresh() {
+  const c = loadConfig();
+  if (!c) { toast('请先连接 GitHub', 'error'); return; }
+  const btn = document.getElementById('btnRefresh');
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = '⏳ 刷新中...';
   try {
-    const s = comment.body.indexOf('```json\n') + 8;
-    const e = comment.body.lastIndexOf('\n```');
-    if (s < 8 || e < 0) return null;
-    const rec = JSON.parse(comment.body.substring(s, e));
-    rec._url = comment.url;
-    if (!rec.patient) rec.patient = (cfg && cfg.defaultPatient) ? cfg.defaultPatient : DEFAULT_PATIENT;
-    return rec;
-  } catch (err) {
-    console.warn('跳过无法解析的评论', comment.id, err);
-    return null;
+    await doLoadRecords();
+    const recs = JSON.parse(sessionStorage.getItem('recs') || '[]');
+    toast(`✅ 已刷新，共 ${recs.length} 条记录`);
+  } catch (e) {
+    toast('❌ 刷新失败: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = orig;
   }
 }
 
-// 加载所有 comments（分页）
-async function loadRecords(cfg) {
-  cfg = cfg || loadConfig();
-  const el = document.getElementById('recordList');
-  el.innerHTML = '<div class="loading"><span class="spinner"></span> 正在加载记录...</div>';
+function toggleConfig() { document.getElementById('configSection').classList.toggle('hidden'); }
 
-  let comments = [], page = 1, lastErr = null;
-  while (page <= 20) { // 最多拉 2000 条，防死循环
-    let r;
-    try {
-      r = await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/issues/${cfg.issueNumber}/comments?per_page=100&page=${page}`, {
-        headers: getHeaders(cfg)
-      });
-    } catch (e) {
-      lastErr = '网络错误，加载失败'; break;
-    }
-    if (!r.ok) {
-      lastErr = r.status === 403 ? 'API 限流或无权限(403)，请稍后重试' : `加载失败(${r.status})`;
-      break;
-    }
+/* 核心加载逻辑（被 connectGitHub 和 handleRefresh 共用） */
+async function doLoadRecords() {
+  const c = loadConfig();
+  if (!c) { showGuide(); return; }
+  const el = document.getElementById('recordList');
+  el.innerHTML = '<div class="loading"><span class="spinner"></span> 正在从 GitHub 加载...</div>';
+
+  let comments = [], page = 1;
+  while (page <= 20) {
+    const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/issues/${c.issueNumber}/comments?per_page=100&page=${page}`, { headers: getHeaders() });
+    if (r.status === 401) throw new Error('Token 失效，请重新连接');
+    if (r.status === 403) throw new Error('API 限流，请稍后再试');
+    if (!r.ok) throw new Error('加载失败: HTTP ' + r.status);
     const batch = await r.json();
-    if (!Array.isArray(batch) || batch.length === 0) break;
+    if (!batch.length) break;
     comments = comments.concat(batch);
     if (batch.length < 100) break;
     page++;
   }
-
-  if (lastErr) {
-    el.innerHTML = `<div class="empty-state">⚠️ ${lastErr}</div>`;
-    document.getElementById('statsBar').innerHTML = '';
-    return;
-  }
-
-  const records = comments
-    .map(c => parseRecord(c, cfg))
-    .filter(Boolean)
-    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
+  const records = comments.map(parseRecord).filter(Boolean)
+    .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
   renderStats(records);
   renderList(records);
   sessionStorage.setItem('recs', JSON.stringify(records));
 }
 
-// 统计：每人独立一张卡片，无"全部"汇总
+function parseRecord(comment) {
+  if (!comment.body.includes(MARKER)) return null;
+  try {
+    const s = comment.body.indexOf('```json\n') + 8;
+    const e = comment.body.lastIndexOf('\n```');
+    const rec = JSON.parse(comment.body.substring(s, e));
+    rec._url = comment.url;
+    if (!rec.patient) { const c = loadConfig(); rec.patient = c ? c.defaultPatient : DEFAULT_PATIENT; }
+    return rec;
+  } catch { return null; }
+}
+
+function showGuide() {
+  document.getElementById('recordList').innerHTML = `
+    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:20px; margin-bottom:20px;">
+      <h3 style="color:#92400e; margin-bottom:8px;">👋 首次使用</h3>
+      <p style="color:#78350f; margin-bottom:6px;">1. 点击右上角 <b>⚙️ 配置</b></p>
+      <p style="color:#78350f; margin-bottom:6px;">2. 确认默认配置（jeremyjia / Corpus / Issue #15）</p>
+      <p style="color:#78350f;">3. 点击 <b>连接并加载数据</b></p>
+    </div>`;
+  document.getElementById('statsBar').innerHTML = '';
+  document.getElementById('mainContent').classList.remove('hidden');
+}
+
 function renderStats(records) {
   const groups = {};
-  records.forEach(r => { (groups[r.patient] = groups[r.patient] || []).push(r); });
-
+  records.forEach(r => { if (!groups[r.patient]) groups[r.patient] = []; groups[r.patient].push(r); });
   const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   let html = '';
-
-  Object.entries(groups)
-    .sort((a, b) => new Date(b[1][0].timestamp) - new Date(a[1][0].timestamp))
-    .forEach(([name, recs]) => {
-      const vals = recs.map(r => r.glucose);
-      const avg = (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1);
-      const recent = recs.filter(r => new Date(r.timestamp) >= sevenDaysAgo);
-      const rAvg = recent.length ? (recent.map(r => r.glucose).reduce((a, b) => a + b, 0) / recent.length).toFixed(1) : '-';
-      const min = Math.min(...vals).toFixed(1), max = Math.max(...vals).toFixed(1);
-      html += `
-        <div class="stat-card">
-          <h3>👤 ${esc(name)}</h3>
-          <div class="stat-row"><span>记录数</span><span>${recs.length}</span></div>
-          <div class="stat-row"><span>平均值</span><span>${avg}</span></div>
-          <div class="stat-row"><span>近7天均值</span><span>${rAvg}</span></div>
-          <div class="stat-row"><span>范围</span><span>${min} ~ ${max}</span></div>
-        </div>`;
-    });
-
-  document.getElementById('statsBar').innerHTML = html || '<div class="stat-card"><h3>📊 统计</h3><div class="stat-row"><span>暂无数据</span></div></div>';
+  Object.entries(groups).sort((a,b) => new Date(b[1][0].timestamp) - new Date(a[1][0].timestamp)).forEach(([name, recs]) => {
+    const vals = recs.map(r => r.glucose);
+    const avg = (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+    const recent = recs.filter(r => new Date(r.timestamp) >= sevenDaysAgo);
+    const rAvg = recent.length ? (recent.map(r=>r.glucose).reduce((a,b)=>a+b,0)/recent.length).toFixed(1) : '-';
+    const min = Math.min(...vals).toFixed(1), max = Math.max(...vals).toFixed(1);
+    html += `<div class="stat-card">
+      <h3>👤 ${name}</h3>
+      <div class="stat-row"><span>记录数</span><span>${recs.length}</span></div>
+      <div class="stat-row"><span>平均值</span><span>${avg}</span></div>
+      <div class="stat-row"><span>近7天均值</span><span>${rAvg}</span></div>
+      <div class="stat-row"><span>范围</span><span>${min} ~ ${max}</span></div>
+    </div>`;
+  });
+  document.getElementById('statsBar').innerHTML = html;
 }
 
-// 列表：按人分组
 function renderList(records) {
   const groups = {};
-  records.forEach(r => { (groups[r.patient] = groups[r.patient] || []).push(r); });
-
+  records.forEach(r => { if (!groups[r.patient]) groups[r.patient] = []; groups[r.patient].push(r); });
   let html = '';
-  Object.entries(groups)
-    .sort((a, b) => new Date(b[1][0].timestamp) - new Date(a[1][0].timestamp))
-    .forEach(([name, recs]) => {
-      html += `<div class="record-group"><div class="group-header">👤 ${esc(name)} · ${recs.length}条</div>`;
-      recs.forEach(r => {
-        const d = new Date(r.timestamp);
-        const gc = glucoseClass(r.glucose, r.measurementType);
-        html += `
-          <div class="record-item">
-            <div class="record-glucose ${gc}">${r.glucose}</div>
-            <div class="record-details">
-              <div class="record-meta">
-                <span class="tag tag-${r.measurementType}">${r.measurementType}</span>
-                ${d.toLocaleDateString('zh-CN')} ${d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
-              </div>
-              ${r.food ? `<div class="record-food">🍽️ ${esc(r.food)}</div>` : ''}
-              ${r.notes ? `<div class="record-notes">${esc(r.notes)}</div>` : ''}
-            </div>
-            <button class="btn-danger" onclick="del('${r.id}')">删除</button>
-          </div>`;
-      });
-      html += '</div>';
+  Object.entries(groups).sort((a,b) => new Date(b[1][0].timestamp) - new Date(a[1][0].timestamp)).forEach(([name, recs]) => {
+    html += `<div class="record-group"><div class="group-header">👤 ${name} · ${recs.length}条</div>`;
+    recs.forEach(r => {
+      const d = new Date(r.timestamp), gc = glucoseClass(r.glucose, r.measurementType);
+      html += `<div class="record-item">
+        <div class="record-glucose ${gc}">${r.glucose}</div>
+        <div class="record-details">
+          <div class="record-meta"><span class="tag tag-${r.measurementType}">${r.measurementType}</span>
+          ${d.toLocaleDateString('zh-CN')} ${d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}</div>
+          ${r.food ? `<div class="record-food">🍽️ ${esc(r.food)}</div>` : ''}
+          ${r.notes ? `<div class="record-notes">${esc(r.notes)}</div>` : ''}
+        </div>
+        <button class="btn-danger" onclick="del('${r.id}')">删除</button>
+      </div>`;
     });
-
-  document.getElementById('recordList').innerHTML = html || '<div class="empty-state">📭 暂无记录，添加第一条血糖数据吧</div>';
+    html += '</div>';
+  });
+  document.getElementById('recordList').innerHTML = html || '<div class="empty-state">暂无记录</div>';
 }
 
-// 血糖值着色
 function glucoseClass(v, t) {
   if (t === '空腹') {
     if (v < 3.9) return 'glucose-danger';
@@ -476,14 +374,11 @@ function glucoseClass(v, t) {
   return 'glucose-danger';
 }
 
-// 添加记录
 document.getElementById('recordForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const cfg = loadConfig();
-  if (!cfg) { toast('请先点右上角配置并连接', 'error'); return; }
-
+  const c = loadConfig(); if (!c) { toast('请先连接 GitHub', 'error'); return; }
   const rec = {
-    id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)) + Math.random().toString(36).slice(2),
+    id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2)),
     patient: document.getElementById('patient').value.trim(),
     timestamp: document.getElementById('timestamp').value,
     glucose: parseFloat(document.getElementById('glucose').value),
@@ -492,76 +387,45 @@ document.getElementById('recordForm').addEventListener('submit', async e => {
     notes: document.getElementById('notes').value.trim(),
     createdAt: new Date().toISOString()
   };
-
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true; btn.textContent = '保存中...';
   try {
-    const r = await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/issues/${cfg.issueNumber}/comments`, {
-      method: 'POST',
-      headers: { ...getHeaders(cfg), 'Content-Type': 'application/json' },
+    const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/issues/${c.issueNumber}/comments`, {
+      method: 'POST', headers: { ...getHeaders(), 'Content-Type': 'application/json' },
       body: JSON.stringify({ body: `${MARKER}${JSON.stringify(rec, null, 2)}\n\`\`\`` })
     });
-    if (!r.ok) {
-      const t = await r.text();
-      throw new Error(`保存失败(${r.status}): ${t}`);
-    }
+    if (!r.ok) throw new Error('保存失败: HTTP ' + r.status);
     toast('✅ 已保存');
-    document.getElementById('glucose').value = '';
-    document.getElementById('food').value = '';
-    document.getElementById('notes').value = '';
-    await loadRecords(cfg);
-  } catch (err) {
-    toast(`❌ ${err.message}`, 'error');
-  } finally {
-    btn.disabled = false; btn.textContent = '💾 保存记录';
-  }
+    document.getElementById('glucose').value = ''; document.getElementById('food').value = ''; document.getElementById('notes').value = '';
+    await doLoadRecords();
+  } catch (e) { toast('❌ ' + e.message, 'error'); }
 });
 
-// 删除记录
 async function del(id) {
-  if (!confirm('确定删除这条记录吗？')) return;
+  if (!confirm('确定删除？')) return;
   const recs = JSON.parse(sessionStorage.getItem('recs') || '[]');
-  const rec = recs.find(r => r.id === id);
-  if (!rec) { toast('找不到该记录', 'error'); return; }
+  const rec = recs.find(r => r.id === id); if (!rec) return;
   try {
-    const cfg = loadConfig();
-    const r = await fetch(rec._url, { method: 'DELETE', headers: getHeaders(cfg) });
-    if (!r.ok && r.status !== 204) throw new Error(`删除失败(${r.status})`);
-    toast('🗑️ 已删除');
-    await loadRecords(cfg);
-  } catch (err) {
-    toast(`❌ ${err.message}`, 'error');
-  }
+    const r = await fetch(rec._url, { method: 'DELETE', headers: getHeaders() });
+    if (r.status !== 204) throw new Error('删除失败');
+    toast('🗑️ 已删除'); await doLoadRecords();
+  } catch (e) { toast('❌ ' + e.message, 'error'); }
 }
 
-function esc(s) {
-  const d = document.createElement('div'); d.textContent = (s == null ? '' : String(s)); return d.innerHTML;
+function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function toast(m, type='success') {
+  const t=document.createElement('div'); t.className=`toast toast-${type}`; t.textContent=m;
+  document.body.appendChild(t); setTimeout(()=>t.remove(),2500);
 }
-function toast(m, type) {
-  const t = document.createElement('div');
-  t.className = `toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
-  t.textContent = m;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
-}
-function setNow() {
-  const n = new Date(), z = n.getTimezoneOffset() * 60000;
-  document.getElementById('timestamp').value = new Date(n - z).toISOString().slice(0, 16);
-}
+function setNow() { const n=new Date(), z=n.getTimezoneOffset()*60000; document.getElementById('timestamp').value = new Date(n-z).toISOString().slice(0,16); }
 
-// 初始化：若有已保存配置则自动连接；否则显示引导
 (function init() {
+  document.getElementById('ghOwner').value = DEFAULT_OWNER;
+  document.getElementById('ghRepo').value = DEFAULT_REPO;
+  document.getElementById('ghIssueNumber').value = DEFAULT_ISSUE;
+  document.getElementById('ghDefaultPatient').value = DEFAULT_PATIENT;
+  const c = loadConfig();
+  if (c) { document.getElementById('patient').value = c.defaultPatient || DEFAULT_PATIENT; connectGitHub(); }
+  else { showGuide(); }
   setNow();
-  const cfg = loadConfig();
-  if (cfg) {
-    // 回填表单
-    document.getElementById('ghOwner').value = cfg.owner;
-    document.getElementById('ghRepo').value = cfg.repo;
-    document.getElementById('ghIssueNumber').value = cfg.issueNumber;
-    document.getElementById('ghDefaultPatient').value = cfg.defaultPatient || DEFAULT_PATIENT;
-    document.getElementById('patient').value = cfg.defaultPatient || DEFAULT_PATIENT;
-    connectGitHub();
-  }
 })();
 </script>
 </body>
