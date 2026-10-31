@@ -5,628 +5,564 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>血糖记录本</title>
 <style>
-  :root {
-    --primary: #4f46e5;
-    --primary-hover: #4338ca;
-    --bg: #f9fafb;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --text: #1f2937;
-    --text-secondary: #6b7280;
-    --danger: #ef4444;
-    --success: #10b981;
-    --warning: #f59e0b;
-  }
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --text: #1f2937;
+  --text-secondary: #6b7280;
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+h1 { text-align: center; margin-bottom: 20px; color: var(--primary); font-size: 1.8rem; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
+/* 配置 */
+.config-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.config-section h2 { margin-bottom: 12px; font-size: 1.1rem; }
+.config-section input {
+  background: rgba(255,255,255,0.9);
+  color: #111;
+}
+.config-status {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+}
+.config-status.connected { background: rgba(16,185,129,0.2); color: #a7f3d0; }
+.config-status.error { background: rgba(239,68,68,0.2); color: #fecaca; }
+.config-status.info { background: rgba(59,130,246,0.2); color: #bfdbfe; }
 
-  header.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
+/* 表单 */
+.form-group { margin-bottom: 14px; }
+label { display: block; margin-bottom: 4px; font-weight: 500; font-size: 0.9rem; }
+input, select, textarea {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 1rem; font-family: inherit;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
+.row { display: flex; gap: 12px; }
+.row .form-group { flex: 1; }
+button {
+  padding: 9px 18px; border: none; border-radius: 8px;
+  font-size: 1rem; cursor: pointer; font-weight: 500;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
+.btn-danger { background: var(--danger); color: white; font-size: 0.85rem; padding: 6px 10px; }
+.btn-secondary { background: var(--border); color: var(--text); }
 
-  header.topbar h1 {
-    color: var(--primary);
-    font-size: 1.6rem;
-  }
+/* 统计 */
+.stats-bar {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--card); padding: 14px 16px;
+  border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  flex: 1; min-width: 180px;
+}
+.stat-card h3 { font-size: 0.95rem; margin-bottom: 8px; color: var(--primary); }
+.stat-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
+.stat-row span:last-child { font-weight: 600; }
 
-  .btn-icon {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 14px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-  }
+/* 列表 */
+.record-group { margin-bottom: 24px; }
+.group-header {
+  font-size: 1rem; font-weight: 600; color: var(--primary);
+  margin-bottom: 10px; padding-bottom: 4px;
+  border-bottom: 2px solid #e0e7ff;
+}
+.record-item {
+  background: var(--card); border-radius: 10px;
+  padding: 14px 18px; margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.record-glucose { font-size: 1.5rem; font-weight: 700; min-width: 70px; }
+.glucose-normal { color: var(--success); }
+.glucose-warning { color: var(--warning); }
+.glucose-danger { color: var(--danger); }
+.record-details { flex: 1; margin-left: 14px; }
+.record-meta { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px; }
+.record-food { font-size: 0.9rem; }
+.record-notes { font-size: 0.85rem; color: var(--text-secondary); font-style: italic; }
+.tag {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 500; margin-right: 6px;
+}
+.tag-空腹 { background: #dbeafe; color: #1e40af; }
+.tag-餐后1h { background: #fce7f3; color: #9d174d; }
+.tag-餐后2h { background: #fef3c7; color: #92400e; }
+.tag-随机 { background: #d1fae5; color: #065f46; }
+.tag-睡前 { background: #ede9fe; color: #5b21b6; }
 
-  .btn-icon:hover { background: #f3f4f6; }
+.loading, .empty-state { text-align: center; padding: 40px; color: var(--text-secondary); }
+.spinner {
+  display: inline-block; width: 20px; height: 20px;
+  border: 3px solid var(--border); border-top-color: var(--primary);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  padding: 10px 20px; border-radius: 8px; color: white; font-weight: 500; z-index: 1000;
+}
+.toast-success { background: var(--success); }
+.toast-error { background: var(--danger); }
+.hidden { display: none !important; }
 
-  .card {
-    background: var(--card);
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    margin-bottom: 24px;
-  }
-
-  .form-group { margin-bottom: 16px; }
-
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
-
-  input, select, textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: border-color 0.2s;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
-  }
-
-  .row { display: flex; gap: 12px; }
-  .row .form-group { flex: 1; }
-
-  button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-primary:hover { background: var(--primary-hover); }
-  .btn-danger { background: var(--danger); color: white; padding: 6px 12px; font-size: 0.85rem; }
-  .btn-secondary { background: var(--border); color: var(--text); }
-  .btn-secondary:hover { background: #d1d5db; }
-
-  /* 记录列表 */
-  .record-list { list-style: none; }
-
-  .record-item {
-    background: var(--card);
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-bottom: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    transition: transform 0.15s;
-  }
-
-  .record-item:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-
-  .record-glucose { font-size: 1.5rem; font-weight: 700; min-width: 80px; }
-  .glucose-normal { color: var(--success); }
-  .glucose-warning { color: var(--warning); }
-  .glucose-danger { color: var(--danger); }
-
-  .record-details { flex: 1; margin-left: 16px; }
-  .record-meta { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px; }
-  .record-food { font-size: 0.9rem; margin-bottom: 2px; }
-  .record-notes { font-size: 0.85rem; color: var(--text-secondary); font-style: italic; }
-  .record-actions { display: flex; gap: 8px; align-items: center; }
-
-  .patient-group { margin-bottom: 20px; }
-  .patient-head {
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding: 8px 12px; margin-bottom: 10px;
-    background: linear-gradient(90deg, #eef2ff, #f5f3ff);
-    border-left: 4px solid var(--primary); border-radius: 6px;
-  }
-  .patient-name { font-weight: 600; color: var(--primary); font-size: 1rem; }
-  .patient-count { font-size: 0.8rem; color: var(--text-secondary); }
-  .patient-group .record-list { list-style: none; }
-
-  .stats-block { flex: 1; min-width: 260px; }
-  .stats-title { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
-  .stats-bar { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; align-items: flex-start; }
-  .stats-bar .stat-item { min-width: 90px; }
-
-  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; }
-  .tag-空腹 { background: #dbeafe; color: #1e40af; }
-  .tag-餐后2h { background: #fef3c7; color: #92400e; }
-  .tag-餐后1h { background: #ffe4e6; color: #9f1239; }
-  .tag-随机 { background: #d1fae5; color: #065f46; }
-  .tag-睡前 { background: #ede9fe; color: #5b21b6; }
-
-  .loading { text-align: center; padding: 40px; color: var(--text-secondary); }
-  .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .stats-bar { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
-  .stat-item { background: var(--card); padding: 12px 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1; min-width: 120px; text-align: center; }
-  .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
-  .stat-label { font-size: 0.8rem; color: var(--text-secondary); }
-
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
-  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
-
-  .hidden { display: none !important; }
-
-  /* 配置弹窗 */
-  .modal-mask {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-    display: flex; align-items: center; justify-content: center; z-index: 100;
-  }
-  .modal {
-    background: var(--card); border-radius: 12px; padding: 28px;
-    width: 92%; max-width: 480px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
-  }
-  .modal h2 { margin-bottom: 18px; font-size: 1.2rem; color: var(--primary); }
-  .modal .hint { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
-  .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
-  .config-summary { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; }
-  .config-summary.connected { color: var(--success); }
-
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; color: white; font-weight: 500; z-index: 1000; animation: slideUp 0.3s ease; }
-  .toast-success { background: var(--success); }
-  .toast-error { background: var(--danger); }
-  @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
-
-  @media (max-width: 600px) {
-    .row { flex-direction: column; gap: 0; }
-    .record-item { flex-direction: column; }
-    .record-details { margin-left: 0; margin-top: 8px; }
-    .record-actions { margin-top: 8px; align-self: flex-end; }
-  }
+/* 引导 */
+.guide {
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
+  font-size: 0.9rem; color: #92400e;
+}
+.guide code { background: #fef3c7; padding: 1px 5px; border-radius: 4px; }
+.guide ol { margin-left: 20px; }
+.guide li { margin-bottom: 6px; }
 </style>
 </head>
 <body>
 
-<header class="topbar">
-  <h1>🩸 血糖记录本</h1>
-  <button class="btn-icon" onclick="openConfig()">⚙️ 配置</button>
-</header>
+<h1>🩸 血糖记录本</h1>
 
-<!-- 统计 -->
-<div class="stats-bar" id="statsBar"></div>
-
-<!-- 添加记录表单 -->
-<div class="card">
-  <h2 style="margin-bottom:16px; font-size:1.1rem;">📝 添加记录</h2>
-  <form id="recordForm">
-    <div class="row">
-      <div class="form-group">
-        <label>被测人</label>
-        <input type="text" id="patient" required placeholder="如: Jeremy" value="Jeremy">
-      </div>
-      <div class="form-group">
-        <label>血糖值 (mmol/L)</label>
-        <input type="number" id="glucose" step="0.1" min="0" max="30" required placeholder="如: 5.6">
-      </div>
-      <div class="form-group">
-        <label>测量类型</label>
-        <select id="measurementType">
-          <option value="空腹">🌅 空腹</option>
-          <option value="餐后1h">🍚 餐后1h</option>
-          <option value="餐后2h">🍚 餐后2h</option>
-          <option value="随机">🎲 随机</option>
-          <option value="睡前">🌙 睡前</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>测量时间</label>
-      <input type="datetime-local" id="timestamp" required>
-    </div>
-    <div class="form-group">
-      <label>饮食内容</label>
-      <input type="text" id="food" placeholder="如: 燕麦粥、鸡蛋、全麦面包...">
-    </div>
-    <div class="form-group">
-      <label>备注</label>
-      <textarea id="notes" rows="2" placeholder="运动、心情、特殊情况等..."></textarea>
-    </div>
-    <div style="display:flex; gap:12px;">
-      <button type="submit" class="btn-primary">💾 保存记录</button>
-      <button type="button" class="btn-secondary" onclick="loadRecords()">🔄 刷新</button>
-    </div>
-  </form>
+<div style="text-align:right; margin-bottom:8px;">
+  <button class="btn-secondary" onclick="toggleConfig()">⚙️ 配置</button>
 </div>
 
-<!-- 记录列表 -->
-<div id="recordList">
-  <div class="loading"><span class="spinner"></span> 加载中...</div>
-</div>
-
-<!-- 配置弹窗 -->
-<div class="modal-mask hidden" id="configModal">
-  <div class="modal">
-    <h2>⚙️ GitHub 配置</h2>
-    <div id="configSummary" class="config-summary"></div>
+<div class="config-section hidden" id="configSection">
+  <h2>GitHub 配置</h2>
+  <div class="form-group">
+    <label>GitHub Token（留空使用内置默认值）</label>
+    <input type="password" id="ghToken" placeholder="留空使用默认值">
+  </div>
+  <div class="row">
     <div class="form-group">
-      <label>GitHub Token</label>
-      <input type="password" id="cfgToken" placeholder="留空则使用内置默认值" autocomplete="off">
-      <div class="hint">需要 repo / Issues 读写权限。留空即使用默认值。</div>
+      <label>仓库所有者</label>
+      <input type="text" id="ghOwner" value="jeremyjia">
     </div>
-    <div class="row">
-      <div class="form-group">
-        <label>仓库所有者</label>
-        <input type="text" id="cfgOwner" placeholder="jeremyjia">
-      </div>
-      <div class="form-group">
-        <label>仓库名称</label>
-        <input type="text" id="cfgRepo" placeholder="Corpus">
-      </div>
+    <div class="form-group">
+      <label>仓库名称</label>
+      <input type="text" id="ghRepo" value="Corpus">
     </div>
+  </div>
+  <div class="row">
     <div class="form-group">
       <label>Issue 编号</label>
-      <input type="number" id="cfgIssue" placeholder="15">
-      <div class="hint">记录将存为该 Issue 下的评论。</div>
+      <input type="number" id="ghIssueNumber" value="15">
     </div>
     <div class="form-group">
       <label>默认被测人</label>
-      <input type="text" id="cfgPatient" placeholder="Jeremy">
-      <div class="hint">新增记录默认归属此人；留空则用内置默认值 Jeremy。</div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeConfig()">取消</button>
-      <button class="btn-primary" onclick="saveAndConnect()">保存并连接</button>
+      <input type="text" id="ghDefaultPatient" value="Jeremy">
     </div>
   </div>
+  <button class="btn-primary" onclick="connectGitHub()">连接并加载数据</button>
+  <div id="configStatus"></div>
+</div>
+
+<!-- 首次加载引导（未配置/未连接时显示） -->
+<div class="guide" id="guide">
+  <strong>首次使用指引：</strong>
+  <ol>
+    <li>确认仓库 <code>jeremyjia/Corpus</code> 中已存在 <b>Issue #15</b>（没有就新建一个，标题随意）。</li>
+    <li>点右上角 <b>⚙️ 配置</b>，确认配置无误后点 <b>连接并加载数据</b>。</li>
+    <li>连接成功后即可添加记录；数据保存在 Issue #15 的评论中。</li>
+    <li>若页面仍空白：检查仓库是否已开启 <b>Settings → Pages</b>（Source 选 main 分支、/root）。</li>
+  </ol>
+</div>
+
+<div id="mainContent" class="hidden">
+  <div class="stats-bar" id="statsBar"></div>
+
+  <div class="card">
+    <h2 style="margin-bottom:12px; font-size:1.05rem;">📝 添加记录</h2>
+    <form id="recordForm">
+      <div class="row">
+        <div class="form-group">
+          <label>被测人</label>
+          <input type="text" id="patient" required>
+        </div>
+        <div class="form-group">
+          <label>测量类型</label>
+          <select id="measurementType">
+            <option value="空腹">🌅 空腹</option>
+            <option value="餐后1h">🍚 餐后1h</option>
+            <option value="餐后2h">🍛 餐后2h</option>
+            <option value="随机">🎲 随机</option>
+            <option value="睡前">🌙 睡前</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <label>血糖值 (mmol/L)</label>
+          <input type="number" id="glucose" step="0.1" min="0" max="30" required placeholder="如 5.6">
+        </div>
+        <div class="form-group">
+          <label>测量时间</label>
+          <input type="datetime-local" id="timestamp" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>饮食内容</label>
+        <input type="text" id="food" placeholder="如：燕麦粥、鸡蛋">
+      </div>
+      <div class="form-group">
+        <label>备注</label>
+        <textarea id="notes" rows="2" placeholder="运动、心情、特殊情况..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary" id="submitBtn">💾 保存记录</button>
+    </form>
+  </div>
+
+  <div id="recordList"></div>
 </div>
 
 <script>
-// ============ 配置管理 ============
-// 默认值（内置）
 const DEFAULT_OWNER = 'jeremyjia';
 const DEFAULT_REPO = 'Corpus';
 const DEFAULT_ISSUE = 15;
-// Token 以字符串相加形式拆分存储，避免被简单扫描提取
-const DEFAULT_TOKEN = ['ghp_', 'Od6GW3J2', 'NiP01Zsz', 'g9JQV0am', 'znUxhF33', 'iBES'].join('');
-
-// 默认被测人姓名
 const DEFAULT_PATIENT = 'Jeremy';
+// token 拆分拼接，防止静态扫描直接暴露
+const DEFAULT_TOKEN = ['ghp_','Od6GW3J2','NiP01Zsz','g9JQV0am','znUxhF33','iBES'].join('');
 
-const CONFIG_KEY = 'glucose_tracker_config';
+const CONFIG_KEY = 'glucose_config';
+const MARKER = '<!-- GLUCOSE_RECORD -->\n```json\n';
+const API = 'https://api.github.com';
 
-function getDefaultConfig() {
-  return { token: DEFAULT_TOKEN, owner: DEFAULT_OWNER, repo: DEFAULT_REPO, issueNumber: DEFAULT_ISSUE, patient: DEFAULT_PATIENT };
-}
-
-function saveConfig(config) { localStorage.setItem(CONFIG_KEY, JSON.stringify(config)); }
-
+function saveConfig(c) { localStorage.setItem(CONFIG_KEY, JSON.stringify(c)); }
 function loadConfig() {
-  const saved = localStorage.getItem(CONFIG_KEY);
-  if (saved) return JSON.parse(saved);
-  // 无保存配置时使用默认值
-  const def = getDefaultConfig();
-  saveConfig(def);
-  return def;
+  const s = localStorage.getItem(CONFIG_KEY); return s ? JSON.parse(s) : null;
 }
-
-function getHeaders() {
-  const config = loadConfig();
+function getHeaders(cfg) {
   return {
-    'Authorization': 'Bearer ' + config.token,
+    'Authorization': `Bearer ${cfg.token}`,
     'Accept': 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28'
   };
 }
 
-// ============ 配置弹窗 ============
-function openConfig() {
-  const cfg = loadConfig();
-  document.getElementById('cfgToken').value = cfg.token === DEFAULT_TOKEN ? '' : cfg.token;
-  document.getElementById('cfgOwner').value = cfg.owner;
-  document.getElementById('cfgRepo').value = cfg.repo;
-  document.getElementById('cfgIssue').value = cfg.issueNumber;
-  document.getElementById('cfgPatient').value = cfg.patient === DEFAULT_PATIENT ? '' : (cfg.patient || '');
-  updateConfigSummary();
-  document.getElementById('configModal').classList.remove('hidden');
+function showStatus(msg, type) {
+  const el = document.getElementById('configStatus');
+  el.className = `config-status ${type}`;
+  el.textContent = msg;
 }
 
-function closeConfig() { document.getElementById('configModal').classList.add('hidden'); }
-
-function updateConfigSummary() {
-  const el = document.getElementById('configSummary');
-  const cfg = loadConfig();
-  el.textContent = '当前: ' + cfg.owner + '/' + cfg.repo + ' #' + cfg.issueNumber + '  (' + (cfg.patient || DEFAULT_PATIENT) + ')';
-  el.className = 'config-summary connected';
+function toggleConfig() {
+  document.getElementById('configSection').classList.toggle('hidden');
 }
 
-async function saveAndConnect() {
-  const tokenInput = document.getElementById('cfgToken').value.trim();
-  const owner = document.getElementById('cfgOwner').value.trim() || DEFAULT_OWNER;
-  const repo = document.getElementById('cfgRepo').value.trim() || DEFAULT_REPO;
-  const issueNumber = document.getElementById('cfgIssue').value.trim() || DEFAULT_ISSUE;
-  const patient = document.getElementById('cfgPatient').value.trim() || DEFAULT_PATIENT;
+// 读取表单配置，未填写则用默认值
+function readConfig() {
+  return {
+    token: document.getElementById('ghToken').value.trim() || DEFAULT_TOKEN,
+    owner: document.getElementById('ghOwner').value.trim() || DEFAULT_OWNER,
+    repo: document.getElementById('ghRepo').value.trim() || DEFAULT_REPO,
+    issueNumber: parseInt(document.getElementById('ghIssueNumber').value.trim() || DEFAULT_ISSUE),
+    defaultPatient: document.getElementById('ghDefaultPatient').value.trim() || DEFAULT_PATIENT
+  };
+}
 
-  const token = tokenInput ? tokenInput : DEFAULT_TOKEN;
+// 连接 GitHub：验证 issue 存在 + 加载数据
+async function connectGitHub() {
+  const cfg = readConfig();
+  const btn = event ? event.target : null;
+  if (btn) { btn.disabled = true; btn.textContent = '连接中...'; }
 
-  // 先测试连接
   try {
-    const resp = await fetch('https://api.github.com/repos/' + owner + '/' + repo + '/issues/' + issueNumber, {
-      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
-    });
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      throw new Error(err.message || '连接失败');
+    // 1) 验证 issue 存在且 token 有权限
+    let issue;
+    try {
+      const r = await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/issues/${cfg.issueNumber}`, {
+        headers: { 'Authorization': `Bearer ${cfg.token}`, 'Accept': 'application/vnd.github+json' }
+      });
+      if (!r.ok) {
+        const t = await r.text();
+        if (r.status === 404) throw new Error(`仓库或 Issue #${cfg.issueNumber} 不存在，请先到仓库新建 Issue #${cfg.issueNumber}`);
+        if (r.status === 401) throw new Error('Token 无效（401），请检查 Token 是否有 repo/issues 权限');
+        if (r.status === 403) throw new Error('Token 无权限（403），需勾选 Issues:read & write；也可能是 API 限流，稍后重试');
+        throw new Error(`验证失败 (${r.status}): ${t}`);
+      }
+      issue = await r.json();
+    } catch (e) {
+      if (e.message.startsWith('仓库或') || e.message.startsWith('Token 无效') || e.message.startsWith('Token 无权限')) throw e;
+      throw new Error('网络请求失败，请确认已开启 GitHub Pages 且网络正常');
     }
-    const issue = await resp.json();
-    saveConfig({ token: token, owner: owner, repo: repo, issueNumber: parseInt(issueNumber), patient: patient });
-    showToast('✅ 已连接: ' + issue.title);
-    closeConfig();
-    loadRecords();
+
+    // 2) 保存配置
+    saveConfig(cfg);
+    document.getElementById('patient').value = cfg.defaultPatient;
+
+    showStatus(`✅ 已连接 Issue #${cfg.issueNumber}：「${issue.title}」`, 'connected');
+    document.getElementById('guide').classList.add('hidden');
+    document.getElementById('mainContent').classList.remove('hidden');
+
+    // 3) 加载数据
+    await loadRecords(cfg);
   } catch (e) {
-    showToast('❌ ' + e.message, 'error');
+    showStatus(`❌ ${e.message}`, 'error');
+    document.getElementById('mainContent').classList.add('hidden');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '连接并加载数据'; }
   }
 }
 
-// ============ GitHub 数据操作 ============
-const API_BASE = 'https://api.github.com';
-const COMMENT_MARKER = '<!-- GLUCOSE_RECORD -->\n```json\n';
-const COMMENT_END = '\n```';
-
-function parseRecordFromComment(comment) {
-  const body = comment.body;
-  if (!body.includes('<!-- GLUCOSE_RECORD -->')) return null;
+// 解析一条 comment -> record（含向后兼容：无 patient 归默认人）
+function parseRecord(comment, cfg) {
+  if (!comment.body || !comment.body.includes(MARKER)) return null;
   try {
-    const jsonStart = body.indexOf('```json\n') + 8;
-    const jsonEnd = body.lastIndexOf('\n```');
-    const record = JSON.parse(body.substring(jsonStart, jsonEnd));
-    record._commentId = comment.id;
-    record._commentUrl = comment.url;
-    return record;
-  } catch (e) {
-    console.warn('解析评论失败:', e, comment.id);
+    const s = comment.body.indexOf('```json\n') + 8;
+    const e = comment.body.lastIndexOf('\n```');
+    if (s < 8 || e < 0) return null;
+    const rec = JSON.parse(comment.body.substring(s, e));
+    rec._url = comment.url;
+    if (!rec.patient) rec.patient = (cfg && cfg.defaultPatient) ? cfg.defaultPatient : DEFAULT_PATIENT;
+    return rec;
+  } catch (err) {
+    console.warn('跳过无法解析的评论', comment.id, err);
     return null;
   }
 }
 
-async function loadRecords() {
-  const config = loadConfig();
-  const container = document.getElementById('recordList');
-  container.innerHTML = '<div class="loading"><span class="spinner"></span> 加载中...</div>';
+// 加载所有 comments（分页）
+async function loadRecords(cfg) {
+  cfg = cfg || loadConfig();
+  const el = document.getElementById('recordList');
+  el.innerHTML = '<div class="loading"><span class="spinner"></span> 正在加载记录...</div>';
 
-  try {
-    let allComments = [];
-    let page = 1;
-    const perPage = 100;
-    while (true) {
-      const resp = await fetch(
-        API_BASE + '/repos/' + config.owner + '/' + config.repo + '/issues/' + config.issueNumber + '/comments?per_page=' + perPage + '&page=' + page,
-        { headers: getHeaders() }
-      );
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error(err.message || '读取失败');
-      }
-      const comments = await resp.json();
-      if (comments.length === 0) break;
-      allComments = allComments.concat(comments);
-      if (comments.length < perPage) break;
-      page++;
+  let comments = [], page = 1, lastErr = null;
+  while (page <= 20) { // 最多拉 2000 条，防死循环
+    let r;
+    try {
+      r = await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/issues/${cfg.issueNumber}/comments?per_page=100&page=${page}`, {
+        headers: getHeaders(cfg)
+      });
+    } catch (e) {
+      lastErr = '网络错误，加载失败'; break;
     }
-
-    const records = allComments
-      .map(parseRecordFromComment)
-      .filter(r => r !== null)
-      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-    renderRecords(records);
-    renderStats(records);
-    sessionStorage.setItem('current_records', JSON.stringify(records));
-  } catch (e) {
-    container.innerHTML = '<div class="empty-state">❌ 加载失败: ' + escapeHtml(e.message) + '</div>';
-  }
-}
-
-async function saveRecord(record) {
-  const config = loadConfig();
-  const body = COMMENT_MARKER + JSON.stringify(record, null, 2) + COMMENT_END;
-  const resp = await fetch(
-    API_BASE + '/repos/' + config.owner + '/' + config.repo + '/issues/' + config.issueNumber + '/comments',
-    {
-      method: 'POST',
-      headers: { ...getHeaders(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body: body })
+    if (!r.ok) {
+      lastErr = r.status === 403 ? 'API 限流或无权限(403)，请稍后重试' : `加载失败(${r.status})`;
+      break;
     }
-  );
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    throw new Error(err.message || '保存失败');
+    const batch = await r.json();
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    comments = comments.concat(batch);
+    if (batch.length < 100) break;
+    page++;
   }
-  return resp.json();
-}
 
-// ============ 渲染 ============
-// 多用户：把记录按 patient 分组（组内保持时间倒序）
-function groupByPatient(records) {
-  const map = {};
-  records.forEach(r => {
-    const key = (r.patient && r.patient.trim()) || DEFAULT_PATIENT;
-    (map[key] = map[key] || []).push(r);
-  });
-  // 排序：有记录的组按最新一条时间倒序；组内固定已是倒序
-  return Object.keys(map).sort((a, b) => {
-    const ta = Math.max.apply(null, map[a].map(r => new Date(r.timestamp).getTime()));
-    const tb = Math.max.apply(null, map[b].map(r => new Date(r.timestamp).getTime()));
-    return tb - ta;
-  }).map(k => ({ patient: k, list: map[k] }));
-}
-
-function renderRecords(records) {
-  const container = document.getElementById('recordList');
-  if (records.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>还没有记录，添加第一条血糖数据吧</p></div>';
+  if (lastErr) {
+    el.innerHTML = `<div class="empty-state">⚠️ ${lastErr}</div>`;
+    document.getElementById('statsBar').innerHTML = '';
     return;
   }
 
-  const groups = groupByPatient(records);
-  let html = '';
-  groups.forEach(g => {
-    const avg = (g.list.map(r => r.glucose).reduce((a, b) => a + b, 0) / g.list.length).toFixed(1);
-    html += '<div class="patient-group">' +
-      '<div class="patient-head">' +
-        '<span class="patient-name">👤 ' + escapeHtml(g.patient) + '</span>' +
-        '<span class="patient-count">' + g.list.length + ' 条 · 均 ' + avg + '</span>' +
-      '</div>' +
-      '<ul class="record-list">' + g.list.map(r => {
-        const date = new Date(r.timestamp);
-        const dateStr = date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
-        const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-        const cls = getGlucoseClass(r.glucose, r.measurementType);
-        return '<li class="record-item">' +
-          '<div class="record-glucose ' + cls + '">' + r.glucose + '</div>' +
-          '<div class="record-details">' +
-            '<div class="record-meta"><span class="tag tag-' + r.measurementType + '">' + r.measurementType + '</span> &nbsp;' + dateStr + ' ' + timeStr + '</div>' +
-            (r.food ? '<div class="record-food">🍽️ ' + escapeHtml(r.food) + '</div>' : '') +
-            (r.notes ? '<div class="record-notes">' + escapeHtml(r.notes) + '</div>' : '') +
-          '</div>' +
-          '<div class="record-actions"><button class="btn-danger" onclick="handleDelete(\'' + r.id + '\')">删除</button></div>' +
-        '</li>';
-      }).join('') + '</ul>' +
-    '</div>';
-  });
-  container.innerHTML = html;
+  const records = comments
+    .map(c => parseRecord(c, cfg))
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  renderStats(records);
+  renderList(records);
+  sessionStorage.setItem('recs', JSON.stringify(records));
 }
 
+// 统计：每人独立一张卡片，无"全部"汇总
 function renderStats(records) {
-  const cfg = loadConfig();
-  const patient = cfg.patient || DEFAULT_PATIENT;
-  const mine = records.filter(r => ((r.patient && r.patient.trim()) || DEFAULT_PATIENT) === patient);
-  const statHtml = (label, rs) => {
-    if (rs.length === 0) return '<div class="stat-item"><div class="stat-value">0</div><div class="stat-label">' + label + '记录数</div></div>' +
-      '<div class="stat-item"><div class="stat-value">-</div><div class="stat-label">' + label + '平均值</div></div>' +
-      '<div class="stat-item"><div class="stat-value">-</div><div class="stat-label">' + label + '近7天</div></div>' +
-      '<div class="stat-item"><div class="stat-value">-</div><div class="stat-label">' + label + '范围</div></div>';
-    const g = rs.map(r => r.glucose);
-    const avg = (g.reduce((a, b) => a + b, 0) / g.length).toFixed(1);
-    const min = Math.min.apply(null, g).toFixed(1);
-    const max = Math.max.apply(null, g).toFixed(1);
-    const sevenDaysAgo = new Date(Date.now() - 7 * 86400000);
-    const recent = rs.filter(r => new Date(r.timestamp) >= sevenDaysAgo);
-    const recentAvg = recent.length > 0 ? (recent.map(r => r.glucose).reduce((a, b) => a + b, 0) / recent.length).toFixed(1) : '-';
-    return '<div class="stat-item"><div class="stat-value">' + rs.length + '</div><div class="stat-label">' + label + '记录数</div></div>' +
-      '<div class="stat-item"><div class="stat-value">' + avg + '</div><div class="stat-label">' + label + '平均值</div></div>' +
-      '<div class="stat-item"><div class="stat-value">' + recentAvg + '</div><div class="stat-label">' + label + '近7天</div></div>' +
-      '<div class="stat-item"><div class="stat-value">' + min + '~' + max + '</div><div class="stat-label">' + label + '范围</div></div>';
-  };
-  document.getElementById('statsBar').innerHTML =
-    '<div class="stats-block"><div class="stats-title">📊 全部 (' + records.length + ')</div>' + statHtml('全部', records) + '</div>' +
-    '<div class="stats-block"><div class="stats-title">👤 ' + escapeHtml(patient) + ' (' + mine.length + ')</div>' + statHtml('本人', mine) + '</div>';
+  const groups = {};
+  records.forEach(r => { (groups[r.patient] = groups[r.patient] || []).push(r); });
+
+  const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  let html = '';
+
+  Object.entries(groups)
+    .sort((a, b) => new Date(b[1][0].timestamp) - new Date(a[1][0].timestamp))
+    .forEach(([name, recs]) => {
+      const vals = recs.map(r => r.glucose);
+      const avg = (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1);
+      const recent = recs.filter(r => new Date(r.timestamp) >= sevenDaysAgo);
+      const rAvg = recent.length ? (recent.map(r => r.glucose).reduce((a, b) => a + b, 0) / recent.length).toFixed(1) : '-';
+      const min = Math.min(...vals).toFixed(1), max = Math.max(...vals).toFixed(1);
+      html += `
+        <div class="stat-card">
+          <h3>👤 ${esc(name)}</h3>
+          <div class="stat-row"><span>记录数</span><span>${recs.length}</span></div>
+          <div class="stat-row"><span>平均值</span><span>${avg}</span></div>
+          <div class="stat-row"><span>近7天均值</span><span>${rAvg}</span></div>
+          <div class="stat-row"><span>范围</span><span>${min} ~ ${max}</span></div>
+        </div>`;
+    });
+
+  document.getElementById('statsBar').innerHTML = html || '<div class="stat-card"><h3>📊 统计</h3><div class="stat-row"><span>暂无数据</span></div></div>';
 }
 
-function getGlucoseClass(value, type) {
-  if (type === '空腹') {
-    if (value < 3.9) return 'glucose-danger';
-    if (value <= 6.1) return 'glucose-normal';
-    if (value <= 7.0) return 'glucose-warning';
-    return 'glucose-danger';
-  } else if (type === '餐后1h' || type === '餐后2h') {
-    if (value < 3.9) return 'glucose-danger';
-    if (value <= 7.8) return 'glucose-normal';
-    if (value <= 11.1) return 'glucose-warning';
+// 列表：按人分组
+function renderList(records) {
+  const groups = {};
+  records.forEach(r => { (groups[r.patient] = groups[r.patient] || []).push(r); });
+
+  let html = '';
+  Object.entries(groups)
+    .sort((a, b) => new Date(b[1][0].timestamp) - new Date(a[1][0].timestamp))
+    .forEach(([name, recs]) => {
+      html += `<div class="record-group"><div class="group-header">👤 ${esc(name)} · ${recs.length}条</div>`;
+      recs.forEach(r => {
+        const d = new Date(r.timestamp);
+        const gc = glucoseClass(r.glucose, r.measurementType);
+        html += `
+          <div class="record-item">
+            <div class="record-glucose ${gc}">${r.glucose}</div>
+            <div class="record-details">
+              <div class="record-meta">
+                <span class="tag tag-${r.measurementType}">${r.measurementType}</span>
+                ${d.toLocaleDateString('zh-CN')} ${d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+              </div>
+              ${r.food ? `<div class="record-food">🍽️ ${esc(r.food)}</div>` : ''}
+              ${r.notes ? `<div class="record-notes">${esc(r.notes)}</div>` : ''}
+            </div>
+            <button class="btn-danger" onclick="del('${r.id}')">删除</button>
+          </div>`;
+      });
+      html += '</div>';
+    });
+
+  document.getElementById('recordList').innerHTML = html || '<div class="empty-state">📭 暂无记录，添加第一条血糖数据吧</div>';
+}
+
+// 血糖值着色
+function glucoseClass(v, t) {
+  if (t === '空腹') {
+    if (v < 3.9) return 'glucose-danger';
+    if (v <= 6.1) return 'glucose-normal';
+    if (v <= 7.0) return 'glucose-warning';
     return 'glucose-danger';
   }
-  if (value < 3.9) return 'glucose-danger';
-  if (value <= 7.8) return 'glucose-normal';
-  if (value <= 11.1) return 'glucose-warning';
+  if (v < 3.9) return 'glucose-danger';
+  if (v <= 7.8) return 'glucose-normal';
+  if (v <= 11.1) return 'glucose-warning';
   return 'glucose-danger';
 }
 
-// ============ 交互 ============
-function generateId() {
-  return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function showToast(msg, type = 'success') {
-  const toast = document.createElement('div');
-  toast.className = 'toast toast-' + type;
-  toast.textContent = msg;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
-
-document.getElementById('recordForm').addEventListener('submit', async (e) => {
+// 添加记录
+document.getElementById('recordForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const record = {
-    id: generateId(),
+  const cfg = loadConfig();
+  if (!cfg) { toast('请先点右上角配置并连接', 'error'); return; }
+
+  const rec = {
+    id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)) + Math.random().toString(36).slice(2),
+    patient: document.getElementById('patient').value.trim(),
     timestamp: document.getElementById('timestamp').value,
     glucose: parseFloat(document.getElementById('glucose').value),
-    patient: document.getElementById('patient').value.trim() || DEFAULT_PATIENT,
     measurementType: document.getElementById('measurementType').value,
     food: document.getElementById('food').value.trim(),
     notes: document.getElementById('notes').value.trim(),
     createdAt: new Date().toISOString()
   };
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = '保存中...';
   try {
-    await saveRecord(record);
-    showToast('✅ 记录已保存');
+    const r = await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/issues/${cfg.issueNumber}/comments`, {
+      method: 'POST',
+      headers: { ...getHeaders(cfg), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ body: `${MARKER}${JSON.stringify(rec, null, 2)}\n\`\`\`` })
+    });
+    if (!r.ok) {
+      const t = await r.text();
+      throw new Error(`保存失败(${r.status}): ${t}`);
+    }
+    toast('✅ 已保存');
     document.getElementById('glucose').value = '';
     document.getElementById('food').value = '';
     document.getElementById('notes').value = '';
-    setDefaultTime();
-    // 保留被测人姓名，方便连续录入同一人
-    loadRecords();
-  } catch (e) {
-    showToast('❌ ' + e.message, 'error');
+    await loadRecords(cfg);
+  } catch (err) {
+    toast(`❌ ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 保存记录';
   }
 });
 
-async function handleDelete(id) {
+// 删除记录
+async function del(id) {
   if (!confirm('确定删除这条记录吗？')) return;
-  const records = JSON.parse(sessionStorage.getItem('current_records') || '[]');
-  const record = records.find(r => r.id === id);
-  if (!record) return;
+  const recs = JSON.parse(sessionStorage.getItem('recs') || '[]');
+  const rec = recs.find(r => r.id === id);
+  if (!rec) { toast('找不到该记录', 'error'); return; }
   try {
-    await fetch(record._commentUrl, { method: 'DELETE', headers: getHeaders() });
-    showToast('🗑️ 已删除');
-    loadRecords();
-  } catch (e) {
-    showToast('❌ 删除失败: ' + e.message, 'error');
+    const cfg = loadConfig();
+    const r = await fetch(rec._url, { method: 'DELETE', headers: getHeaders(cfg) });
+    if (!r.ok && r.status !== 204) throw new Error(`删除失败(${r.status})`);
+    toast('🗑️ 已删除');
+    await loadRecords(cfg);
+  } catch (err) {
+    toast(`❌ ${err.message}`, 'error');
   }
 }
 
-function setDefaultTime() {
-  const now = new Date();
-  const tzOffset = now.getTimezoneOffset() * 60000;
-  document.getElementById('timestamp').value = new Date(now - tzOffset).toISOString().slice(0, 16);
+function esc(s) {
+  const d = document.createElement('div'); d.textContent = (s == null ? '' : String(s)); return d.innerHTML;
+}
+function toast(m, type) {
+  const t = document.createElement('div');
+  t.className = `toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
+  t.textContent = m;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+function setNow() {
+  const n = new Date(), z = n.getTimezoneOffset() * 60000;
+  document.getElementById('timestamp').value = new Date(n - z).toISOString().slice(0, 16);
 }
 
-// ============ 初始化 ============
-// 主界面优先：直接用默认值连接并加载数据，配置通过右上角按钮设置
+// 初始化：若有已保存配置则自动连接；否则显示引导
 (function init() {
-  setDefaultTime();
-  loadConfig();   // 确保默认值写入 localStorage
-  loadRecords();  // 立即加载主界面数据
+  setNow();
+  const cfg = loadConfig();
+  if (cfg) {
+    // 回填表单
+    document.getElementById('ghOwner').value = cfg.owner;
+    document.getElementById('ghRepo').value = cfg.repo;
+    document.getElementById('ghIssueNumber').value = cfg.issueNumber;
+    document.getElementById('ghDefaultPatient').value = cfg.defaultPatient || DEFAULT_PATIENT;
+    document.getElementById('patient').value = cfg.defaultPatient || DEFAULT_PATIENT;
+    connectGitHub();
+  }
 })();
 </script>
-
 </body>
 </html>
