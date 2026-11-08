@@ -403,7 +403,7 @@
 </head>
 <body>
 <div class="app" id="app">
-    <!-- 顶部按钮行（保留筛选按钮，唯一一处） -->
+    <!-- 顶部按钮行（唯一筛选按钮组） -->
     <div class="top-bar">
         <div class="btn-group">
             <button class="btn" id="configToggleBtn" title="配置 GitHub 参数">⚙️ GitHub 配置</button>
@@ -438,7 +438,7 @@
         <label class="file-label" id="fileLabel">
             <span>📎</span>
             <span>点击选择图片或视频</span>
-            <span class="hint">支持 JPG, PNG, GIF, MP4, WebM 等 (最大10MB)</span>
+            <span class="hint">支持 JPG, PNG, GIF, MP4, WebM 等 (图片≤10MB，视频≤100MB，视账户而定)</span>
             <input type="file" id="fileInput" accept="image/*,video/*">
         </label>
         <div class="preview-box" id="filePreview">
@@ -454,7 +454,7 @@
             <textarea id="descInput" placeholder="添加一些描述文字..."></textarea>
         </div>
         <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <label style="margin:0;">视频/图片链接（可选，视频优先使用链接播放）</label>
+            <label style="margin:0;">视频/图片链接（可选，上传文件时此项被忽略）</label>
             <input type="text" id="videoLinkInput" placeholder="https://example.com/video.mp4 或 图片链接" style="flex:1; min-width:200px;">
         </div>
         <button class="btn-upload" id="uploadBtn">
@@ -462,7 +462,7 @@
         </button>
     </div>
 
-    <!-- 分类浏览 / 查询区域（筛选按钮已移除） -->
+    <!-- 分类浏览 / 查询区域 -->
     <div class="browse-section">
         <div class="media-grid" id="mediaGrid">
             <!-- 动态渲染卡片 -->
@@ -578,33 +578,66 @@
             return { repo, issue: issueNum, token };
         }
 
-        // 将文件转为 data URL (base64)
-        function fileToDataURL(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = (e) => reject(e);
-                reader.readAsDataURL(file);
+        // 获取仓库数字 ID（上传附件接口需要）
+        async function getRepoNumericId(repo, token) {
+            const resp = await fetch(`https://api.github.com/repos/${repo}`, {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
             });
+            if (!resp.ok) {
+                const err = await resp.text();
+                throw new Error(`无法获取仓库信息: ${resp.status} ${err}`);
+            }
+            const data = await resp.json();
+            return data.id;
         }
 
-        // 构建评论正文 (增加 link 字段)
-        function buildCommentBody(title, desc, type, dataUrl, videoLink) {
+        // 使用未公开接口上传附件，返回 user-attachments URL
+        async function uploadAttachment(file, repoNumericId, token) {
+            const contentType = file.type || 'application/octet-stream';
+            const fileName = encodeURIComponent(file.name);
+            const url = `https://uploads.github.com/user-attachments/assets` +
+                        `?repository_id=${repoNumericId}` +
+                        `&name=${fileName}` +
+                        `&content_type=${encodeURIComponent(contentType)}`;
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': contentType,
+                    'Accept': 'application/json'
+                },
+                body: file
+            });
+            if (!resp.ok) {
+                const errText = await resp.text();
+                throw new Error(`附件上传失败: ${resp.status} ${errText}`);
+            }
+            const data = await resp.json();
+            if (!data.url) {
+                throw new Error('附件上传成功但未返回 URL');
+            }
+            return data.url;   // 例如 https://github.com/user-attachments/assets/xxxx
+        }
+
+        // 构建评论正文（只存 URL，不再内嵌 Base64）
+        function buildCommentBody(title, desc, type, assetUrl, videoLink) {
+            const finalLink = videoLink || assetUrl || '';
             const meta = {
                 title: title || '无标题',
                 desc: desc || '',
                 type: type,
-                data: dataUrl,
-                link: videoLink || ''
+                data: '',           // 不再使用 base64
+                link: finalLink
             };
             const metaJson = JSON.stringify(meta);
             let visiblePart = '';
             if (type === 'image') {
-                visiblePart = `![${meta.title}](${dataUrl})\n\n${desc ? '> ' + desc : ''}`;
+                visiblePart = `![${meta.title}](${finalLink})\n\n${desc ? '> ' + desc : ''}`;
             } else if (type === 'video') {
-                // 如果有链接，优先使用链接播放
-                const videoSrc = videoLink || dataUrl;
-                visiblePart = `**视频: ${meta.title}**\n\n${desc ? '> ' + desc : ''}\n\n🎬 [点击播放视频](${videoSrc})`;
+                visiblePart = `**视频: ${meta.title}**\n\n${desc ? '> ' + desc : ''}\n\n${finalLink}`;
             } else {
                 visiblePart = `**文件: ${meta.title}**\n\n${desc ? '> ' + desc : ''}`;
             }
@@ -659,23 +692,25 @@
             filtered.forEach(item => {
                 const isImage = item.type === 'image';
                 const isVideo = item.type === 'video';
-                // 优先使用链接
                 const playableLink = item.link || item.dataUrl;
 
                 let thumbContent = '';
                 let typeBadge = '';
 
                 if (isImage) {
-                    // 图片：使用 dataUrl 或 link
                     const imgSrc = item.dataUrl || item.link || '';
-                    thumbContent = `<img src="${imgSrc}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.style.display='none';this.parentNode.querySelector('.video-link-player')?.remove()">`;
+                    thumbContent = `<img src="${imgSrc}" alt="${escapeHtml(item.title)}" loading="lazy">`;
                 } else if (isVideo) {
-                    // 视频：如果 link 是视频文件地址（.mp4/.webm）则尝试用 video 标签，否则显示链接播放卡片
+                    // 判断是否可直接用 <video> 标签播放
                     const videoSrc = item.link || item.dataUrl;
-                    if (videoSrc && (videoSrc.startsWith('data:video/') || videoSrc.match(/\.(mp4|webm|ogg|mov)(\?|$)/i))) {
+                    const canUseVideoTag = videoSrc && (
+                        videoSrc.startsWith('data:video/') ||
+                        /user-attachments\/assets\//.test(videoSrc) ||  // GitHub 附件视频
+                        /\.(mp4|webm|ogg|mov)(\?|$)/i.test(videoSrc)
+                    );
+                    if (canUseVideoTag) {
                         thumbContent = `<video src="${videoSrc}" preload="metadata" muted controls playsinline></video>`;
                     } else {
-                        // 显示漂亮的链接播放卡片
                         thumbContent = `
                             <div class="video-link-player">
                                 <span class="play-icon">▶️</span>
@@ -687,7 +722,7 @@
                     typeBadge = `<span class="media-type-badge">视频</span>`;
                 }
 
-                const badgeHtml = isVideo && thumbContent.includes('video') ? '' : typeBadge;
+                const badgeHtml = isVideo && thumbContent.includes('<video') ? '' : typeBadge;
 
                 html += `
                     <div class="media-card" data-id="${item.id}" data-type="${item.type}">
@@ -750,17 +785,20 @@
                 return;
             }
 
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            if (selectedFile && selectedFile.size > maxSize) {
-                showToast(`文件太大 (${(selectedFile.size/1024/1024).toFixed(1)}MB)，请小于10MB`, 4000);
-                return;
+            // 基本大小检查（图片 10MB / 视频 100MB，具体以 GitHub 服务端为准）
+            if (selectedFile) {
+                const isVideo = selectedFile.type.startsWith('video/');
+                const limit = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+                if (selectedFile.size > limit) {
+                    showToast(`文件太大 (${(selectedFile.size/1024/1024).toFixed(1)}MB)，限制 ${limit/1024/1024}MB`, 4000);
+                    return;
+                }
             }
 
             let title = titleInput.value.trim();
             const desc = descInput.value.trim();
 
             let type = 'image';
-            let dataUrl = '';
             if (selectedFile) {
                 if (selectedFile.type.startsWith('video/')) type = 'video';
                 else if (selectedFile.type.startsWith('image/')) type = 'image';
@@ -777,7 +815,6 @@
                 }
                 title = title || '链接媒体';
             }
-
             if (videoLink && (videoLink.match(/\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i) || videoLink.includes('video'))) {
                 type = 'video';
             }
@@ -786,11 +823,18 @@
             uploadBtn.innerHTML = '<span class="loading"></span> 上传中...';
 
             try {
-                if (selectedFile) {
-                    dataUrl = await fileToDataURL(selectedFile);
-                }
-                const commentBody = buildCommentBody(title, desc, type, dataUrl, videoLink);
                 const { repo, issue, token } = getGithubConfig();
+
+                let assetUrl = '';
+                if (selectedFile) {
+                    // 1. 获取仓库数字 ID
+                    const repoId = await getRepoNumericId(repo, token);
+                    // 2. 上传附件，拿到 user-attachments URL
+                    assetUrl = await uploadAttachment(selectedFile, repoId, token);
+                }
+
+                // 3. 构建评论并提交（正文只含 URL）
+                const commentBody = buildCommentBody(title, desc, type, assetUrl, videoLink);
                 const url = `https://api.github.com/repos/${repo}/issues/${issue}/comments`;
                 const resp = await fetch(url, {
                     method: 'POST',
@@ -805,6 +849,7 @@
                     const errText = await resp.text();
                     throw new Error(`提交失败: ${resp.status} ${errText}`);
                 }
+
                 showToast('✅ 上传成功，评论已添加', 2500);
                 // 清空表单
                 fileInput.value = '';
@@ -834,14 +879,16 @@
                 fileInput.value = '';
                 return;
             }
-            if (file.size > 10 * 1024 * 1024) {
-                showToast(`文件不能超过10MB (当前 ${(file.size/1024/1024).toFixed(1)}MB)`, 4000);
+            const isVideo = file.type.startsWith('video/');
+            const limit = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+            if (file.size > limit) {
+                showToast(`文件不能超过 ${limit/1024/1024}MB (当前 ${(file.size/1024/1024).toFixed(1)}MB)`, 4000);
                 fileInput.value = '';
                 return;
             }
             selectedFile = file;
             fileNameSpan.textContent = `${file.name} (${(file.size/1024).toFixed(1)} KB)`;
-            filePreview.querySelector('.file-icon').textContent = file.type.startsWith('image/') ? '🖼️' : '🎬';
+            filePreview.querySelector('.file-icon').textContent = isVideo ? '🎬' : '🖼️';
         }
 
         // 设置过滤
